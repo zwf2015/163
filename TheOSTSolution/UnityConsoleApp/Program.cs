@@ -4,6 +4,9 @@ using Microsoft.Practices.Unity.Configuration;
 
 namespace UnityConsoleApp
 {
+    /// <summary>
+    /// Ioc测试
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
