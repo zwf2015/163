@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityConsoleApp", "UnityConsoleApp\UnityConsoleApp.csproj", "{67FACC45-24A5-4C24-8476-14063B9AE35B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IoC", "IoC", "{22929717-0FCE-412C-845A-CBFB4C54B23E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67FACC45-24A5-4C24-8476-14063B9AE35B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FACC45-24A5-4C24-8476-14063B9AE35B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FACC45-24A5-4C24-8476-14063B9AE35B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FACC45-24A5-4C24-8476-14063B9AE35B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{67FACC45-24A5-4C24-8476-14063B9AE35B} = {22929717-0FCE-412C-845A-CBFB4C54B23E}
+	EndGlobalSection
+EndGlobal
