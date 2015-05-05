@@ -1,3 +1,7 @@
 this is a new file .
 Added for testing new branch b_bash_test.
 done.
+
+now ,the hotfix branch is finished.
+and the test branch is finished ,too.
+
