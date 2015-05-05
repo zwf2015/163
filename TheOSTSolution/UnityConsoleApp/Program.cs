@@ -1,4 +1,4 @@
-﻿using System;
+﻿sing System;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 
@@ -14,6 +14,7 @@ namespace UnityConsoleApp
             UnityConfigurationSection configuration = 
                 System.Configuration.ConfigurationManager.GetSection(UnityConfigurationSection.SectionName) as UnityConfigurationSection;
             configuration.Configure(container, "defaultContainer");
+	    //
             A a = container.Resolve<IA>() as A;
             if (null != a)
             {
