@@ -25,6 +25,9 @@ namespace LocalAccounts
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            //添加自定义的Filter
+            config.Filters.Add(new LocalAccounts.Filters.RequireHttpsAttribute());
         }
     }
 }

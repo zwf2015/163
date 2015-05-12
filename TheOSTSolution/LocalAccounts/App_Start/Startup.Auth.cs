@@ -39,7 +39,7 @@ namespace LocalAccounts
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                AllowInsecureHttp = true
+                //AllowInsecureHttp = true
             };
 
             // 使应用程序可以使用不记名令牌来验证用户身份
