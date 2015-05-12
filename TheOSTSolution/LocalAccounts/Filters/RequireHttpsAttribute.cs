@@ -25,23 +25,25 @@ namespace LocalAccounts.Filters
 
             if (request.RequestUri.Scheme != Uri.UriSchemeHttps)
             {
-                var response = new HttpResponseMessage();
+                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden) { ReasonPhrase = "HTTPS Required" };
 
-                if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
-                {
-                    var uri = new UriBuilder(request.RequestUri);
-                    uri.Scheme = Uri.UriSchemeHttps;
-                    uri.Port = this.Port;
+                //var response = new HttpResponseMessage();
 
-                    response.StatusCode = HttpStatusCode.Found;
-                    response.Headers.Location = uri.Uri;
-                }
-                else
-                {
-                    response.StatusCode = HttpStatusCode.Forbidden;
-                }
+                //if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
+                //{
+                //    var uri = new UriBuilder(request.RequestUri);
+                //    uri.Scheme = Uri.UriSchemeHttps;
+                //    uri.Port = this.Port;
 
-                actionContext.Response = response;
+                //    response.StatusCode = HttpStatusCode.Found;
+                //    response.Headers.Location = uri.Uri;
+                //}
+                //else
+                //{
+                //    response.StatusCode = HttpStatusCode.Forbidden;
+                //}
+
+                //actionContext.Response = response;
             }
             else
             {

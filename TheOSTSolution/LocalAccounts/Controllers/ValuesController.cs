@@ -11,6 +11,7 @@ namespace LocalAccounts.Controllers
     public class ValuesController : ApiController
     {
         // GET api/values
+        [LocalAccounts.Filters.RequireHttps]
         public string Get()
         {
             var userName = this.RequestContext.Principal.Identity.Name;
