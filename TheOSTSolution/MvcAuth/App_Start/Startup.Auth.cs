@@ -60,9 +60,13 @@ namespace MvcAuth
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
-            //    ClientId = "",
-            //    ClientSecret = ""
+            //    ClientId = "946192127287-ebfnv450u2pl4kcj6anhaa44m6a459ck.apps.googleusercontent.com",
+            //    ClientSecret = "d5m2AjOknrTPeV04Z2exOdqs"
             //});
+
+            app.UseGoogleAuthentication(
+                    clientId: "946192127287-ebfnv450u2pl4kcj6anhaa44m6a459ck.apps.googleusercontent.com",
+                    clientSecret: "d5m2AjOknrTPeV04Z2exOdqs");
         }
     }
 }
