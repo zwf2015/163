@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Home | Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Index</h2>
+<div>
+    <input type="text" id="Placeholder" value="zoo" hidden="hidden" />
+    <input type="text" id="msg" />
+    <input type="button" id="broadcast" value="广播" />
+    <br />
+    <br />
+    <h3>
+        消息记录： (你是：<span id="MyClientName">zoo</span>):
+    </h3>
+    <ul id="messages"></ul>
+</div>
+<script src="~/Scripts/jquery.signalR-2.0.2.min.js"></script>
+<script src="signalr/hubs"></script>
+<script type="text/javascript">
+    $(function () {
+        var push = $.connection.pb2;
+        push.client.pb2_p = function (message) {
+            writeEvent('<b>ny</b> 对大家说: ' + message, 'event-message');
+        };
+        $("#broadcast").click(function () {
+            push.server.pb2_s($('#msg').val())
+                            .done(function () {
+                                console.log('Sent message success!');
+                            })
+                            .fail(function (e) {
+                                console.warn(e);
+                            });
+        });
+        $.connection.hub.start().done(function () {
+            push.server.bind("wo");
+        });
+        function writeEvent(eventLog, logClass) {
+            var now = new Date();
+            var nowStr = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+            $('#messages').prepend('<li class="' + logClass + '"><b>' + nowStr + '</b> ' + eventLog + '.</li>');
+        }
+    });
+</script>

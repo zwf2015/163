@@ -24,7 +24,9 @@
     <script src="signalr/hubs"></script>
     <script type="text/javascript">
         $(function () {
-            var chat = $.connection.chatHub;
+            //1.监听服务端。
+            var chat = $.connection.hb2;
+            //4.接收服务端推送的消息。
             chat.client.broadcastMessage = function (name, message) {
                 var encodedName = $('<div />').text(name).html();
                 var encodedMsg = $('<div />').text(message).html();
@@ -35,10 +37,10 @@
             if (!name) { name = "Tom"; }
             $('#displayname').val(name);
             $('#message').focus();
-            // 启动链接。
+            // 1.启动链接。
             $.connection.hub.start().done(function () {
                 $('#sendmessage').click(function () {
-                    // 调用发送的方法。
+                    // 2.客户端调用服务端的发送消息的方法，消息从客户端发给服务器。
                     chat.server.send($('#displayname').val(), $('#message').val());
                     $('#message').val('').focus();
                 });
