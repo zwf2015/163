@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Chat</h2>
+<div class="container">
+    <input type="text" id="message" />
+    <input type="button" id="btnSend" value="SendMessage" />
+    <input type="hidden" id="name" />
+    <ul id="discussion"></ul>
+</div>
+@section script{
+    <script src="~/Scripts/jquery.signalR-2.0.2.min.js"></script>
+    <script src="~/SignalRs/hubs"></script>
+    <script>
+        $(function () {
+            var chat = $.connection.pb2;
+            chat.client.SendTo = function (name, message) {
+                $('#discussion').append('<li><strong>' +
+                                        htmlEncode(name) +
+                                        '</strong>:' +
+                                        htmlEncode(message) +
+                                        '</li>'
+                                        );
+
+                $('#discussion').val(prompt('Enter your name:', ''));
+                $('#message').focus();
+            }
+            $.connection.hub.start().done(function () {
+                $('#btnSend').click(function () {
+                    chat.server.pb2_s($('#name').val(), $('#message').val());
+                    $('#message').val('').focus();
+                });
+            });
+        });
+        function htmlEncode(input) {
+            return $('<div />').text(input).html();
+        }
+    </script>
+    }

@@ -12,29 +12,39 @@ namespace SignalRMvc4.SignalRs
     public class PushHub : Hub
     {
         /// <summary>
-        /// 发送普通消息
+        /// 发送指向性的消息
         /// </summary>
         /// <param name="message"></param>
         [HubMethodName("pb2_s")]
-        public void Send(string name, string message)
+        public void SendTo(string name, string message)
         {
+            /// ...
+            /// 一些处理，比如记录到数据库
+            /// ...
+
+            ///向指定的客户端推送消息
             Clients.All.addMsgToPage(new MsgDTO { UserName = name, Message = message });
         }
         /// <summary>
-        /// 向客户端广播消息
+        /// 发送广播消息
         /// </summary>
         /// <param name="message"></param>
         [HubMethodName("pb2_p")]
         public void PushMsg(string message) 
         {
+            /// ...
+            /// 一些处理，比如记录到数据库
+            /// ...
+            
+            /// 向指定的客户端推送消息
             //全部
             Clients.All.pushMsg(message);
-            //调用者
-            Clients.Caller.pushMsg(message);
-            //除了调用者的其他人
-            Clients.Others.pushMsg(message);
-            //指定Id的客户端
-            Clients.Client(Context.ConnectionId).pushMsg(message);
+            ////调用者
+            //Clients.Caller.pushMsg(message);
+            ////除了调用者的其他人
+            //Clients.Others.pushMsg(message);
+            ////指定Id的客户端
+            //Clients.Client(Context.ConnectionId).pushMsg(message);
         }
 
         /// <summary>
@@ -49,7 +59,10 @@ namespace SignalRMvc4.SignalRs
         public override Task OnConnected()
         {
             var id = Context.ConnectionId;
-            var c = Clients.Caller;
+
+            //$.connection.hub.state.customerId = 115;
+            var uId = Clients.Caller.customerId;
+
             return base.OnConnected();
         }
         public override Task OnReconnected()
@@ -67,10 +80,12 @@ namespace SignalRMvc4.SignalRs
         #region 组管理
         public Task JoinGroup(string groupName)
         {
+            /// xxx加入了本组
             return Groups.Add(Context.ConnectionId, groupName);
         }
         public Task LeaveGroup(string groupName)
         {
+            /// xxx离开了本组
             return Groups.Remove(Context.ConnectionId, groupName);
         }
         #endregion

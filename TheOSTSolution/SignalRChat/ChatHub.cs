@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System.Collections.Generic;
+using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
 namespace SignalRChat
@@ -15,6 +16,18 @@ namespace SignalRChat
         {
             //3.服务端把收到的消息推送给所有的客户端。
             Clients.All.broadcastMessage(name, message);
+
+            ////其他消息推送的对象设置
+            //Clients.AllExcept(new string[]{"",""}).willReceivceMsg(name, message);
+            //Clients.Caller.willReceivceMsg(name, message);
+            //Clients.Client("connectionId").willReceivceMsg(name, message);
+            //Clients.Clients(new List<string>()).willReceivceMsg(name, message);
+            //Clients.Group("groupName", new string[] { "", "" }).willReceivceMsg(name, message);
+            //Clients.Groups(new List<string>(), new string[] { "", "" }).willReceivceMsg(name, message);
+            //Clients.Others.willReceivceMsg(name, message);
+            //Clients.OthersInGroup("groupName").willReceivceMsg(name, message);
+            //Clients.OthersInGroups(new List<string>()).willReceivceMsg(name, message);
+            //Clients.User("userId").willReceivceMsg(name, message);
         }
 
     }

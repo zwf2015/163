@@ -4,7 +4,7 @@
 }
 <h2>Index</h2>
 <div>
-    <input type="text" id="Placeholder" value="zoo" hidden="hidden" />
+    <input type="text" id="UID" value="zoo" hidden="hidden" />
     <input type="text" id="msg" />
     <input type="button" id="broadcast" value="广播" />
     <br />
@@ -20,15 +20,18 @@
     $(function () {
         var push = $.connection.pb2;
         push.client.pb2_p = function (message) {
-            writeEvent('<b>ny</b> 对大家说: ' + message, 'event-message');
+            writeEvent('<b>zoo</b> 对大家说: ' + message, 'event-message');
         };
         $("#broadcast").click(function () {
-            push.server.pb2_s($('#msg').val())
+            push.server.pb2_s($('#UID').val(),$('#msg').val())
                             .done(function () {
                                 console.log('Sent message success!');
                             })
                             .fail(function (e) {
-                                console.warn(e);
+                                //console.warn(e);
+                                if (e.source === 'HubException') {
+                                    console.log(e.message + ':' + e.data.user);
+                                }
                             });
         });
         $.connection.hub.start().done(function () {

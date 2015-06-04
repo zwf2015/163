@@ -20,7 +20,7 @@ namespace SignalRMvc4.Controllers
         /// <returns></returns>
         public string PushMsg(string msg)
         {
-            var context = GlobalHost.ConnectionManager.GetHubContext("pushHub");
+            var context = GlobalHost.ConnectionManager.GetHubContext("pb2");
             context.Clients.All.addMessage(msg);
             return "ok";
         }
