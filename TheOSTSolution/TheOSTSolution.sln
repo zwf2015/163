@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRMvc4", "SignalRMvc4\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR-20-MoveShape", "SignalR-20-MoveShape\SignalR-20-MoveShape.csproj", "{ED0D75B3-8308-4311-8EEA-D47519C6377B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{6A0BF11B-A00D-421C-A4F4-340E495906CF}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python_cos_print", "Python_cos_print\Python_cos_print.pyproj", "{1140FA7A-DB47-45C4-94BA-774836E51618}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,8 @@ Global
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1140FA7A-DB47-45C4-94BA-774836E51618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1140FA7A-DB47-45C4-94BA-774836E51618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +103,6 @@ Global
 		{B3D58F71-9574-4509-921D-A11B19F32CE5} = {7A205ABA-F4B2-4E02-ACCE-F95B0B5F9A4E}
 		{344395DA-ACB0-4E46-9921-FC50D2BBC012} = {7A205ABA-F4B2-4E02-ACCE-F95B0B5F9A4E}
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B} = {7A205ABA-F4B2-4E02-ACCE-F95B0B5F9A4E}
+		{1140FA7A-DB47-45C4-94BA-774836E51618} = {6A0BF11B-A00D-421C-A4F4-340E495906CF}
 	EndGlobalSection
 EndGlobal
