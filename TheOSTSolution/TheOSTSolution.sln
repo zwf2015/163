@@ -43,6 +43,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{6A0BF1
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python_cos_print", "Python_cos_print\Python_cos_print.pyproj", "{1140FA7A-DB47-45C4-94BA-774836E51618}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows Service", "Windows Service", "{18EF190E-67D4-4532-B629-4044162D2C4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestService", "TestService\TestService.csproj", "{F116474F-9BD7-4A80-844D-15995DF52E8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,10 @@ Global
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1140FA7A-DB47-45C4-94BA-774836E51618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1140FA7A-DB47-45C4-94BA-774836E51618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F116474F-9BD7-4A80-844D-15995DF52E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F116474F-9BD7-4A80-844D-15995DF52E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F116474F-9BD7-4A80-844D-15995DF52E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F116474F-9BD7-4A80-844D-15995DF52E8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,5 +112,6 @@ Global
 		{344395DA-ACB0-4E46-9921-FC50D2BBC012} = {7A205ABA-F4B2-4E02-ACCE-F95B0B5F9A4E}
 		{ED0D75B3-8308-4311-8EEA-D47519C6377B} = {7A205ABA-F4B2-4E02-ACCE-F95B0B5F9A4E}
 		{1140FA7A-DB47-45C4-94BA-774836E51618} = {6A0BF11B-A00D-421C-A4F4-340E495906CF}
+		{F116474F-9BD7-4A80-844D-15995DF52E8E} = {18EF190E-67D4-4532-B629-4044162D2C4F}
 	EndGlobalSection
 EndGlobal
