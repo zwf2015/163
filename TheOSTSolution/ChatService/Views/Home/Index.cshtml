@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Home | Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row-fluid">
+    <div class="span12">
+        <h3>
+            使用SelfHost的托管进行测试。
+        </h3>
+    </div>
+</div>
+<h2 id="who">Chat</h2>
+<div class="row">
+    <input type="hidden" id="userName" value="" />
+    <input type="hidden" id="userId" value="" />
+    <div class="col-md-12">
+        <input class="input-sm" type="text" id="to" />
+        <input class="input-lg" type="text" id="msg" />
+        <button type="button" class="btn" id="sendBtn">发送</button>
+        <dl contenteditable="false" id="chatBox"></dl>
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.signalR-2.0.2.min.js"></script>
+<script src="http://localhost:8097/signalr/hubs"></script>
+<script type="text/javascript">
+    $(function () {
+        var userName = prompt('Enter your name:', 'Tom');
+        if (!userName) { name = 'Tom'; }
+        $("#userName").val(userName);
+        $("#who").text(userName);
+
+        //Set the hubs URL for the connection
+        $.connection.hub.url = "http://localhost:8097/signalr";
+
+        // Declare a proxy to reference the hub.
+        var chat = $.connection.myHub;
+
+        chat.client.pushMsg = function (userName, message) {
+            receiveEvent(userName, message);
+        };
+        chat.client.sysMsg = function (message) {
+            receiveEvent("系统消息", message);
+        };
+
+        // Start the connection.
+        $.connection.hub.start().done(function () {
+            $("#sendBtn").click(function () {
+                chatHubProxy
+                    .invoke('sendMsg', ($("#userName").val(), $("#to").val(), $("#msg").val()))
+                    .done(function () {
+                        receiveEvent($("#userName").val(), $("#msg").val());
+                    });
+            });
+        })
+        .fail(function (error) {
+            receiveEvent("链接失败", error);
+        });
+    });
+
+    function receiveEvent(userName, message) {
+        var now = new Date();
+        var msgHtml = "<dt>" + now.getHours() + ":" + now.getMinutes() + " " + userName + "</dt><dd>" + message + "</dd>";
+        $("#chatBox").append(msgHtml);
+    }
+</script>

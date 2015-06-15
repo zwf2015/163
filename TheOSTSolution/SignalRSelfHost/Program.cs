@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Owin;
 
 namespace SignalRSelfHost
@@ -36,11 +36,41 @@ namespace SignalRSelfHost
         }
     }
 
+
     public class MyHub : Microsoft.AspNet.SignalR.Hub
     {
+        public static IDictionary<string, string> users = new Dictionary<string, string>();
+
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
+        }
+
+        public void SendMsg(string from, string to, string message)
+        {
+            if (users.ContainsKey(to))
+            {
+                Clients.User(users[to]).pushMsg(from, message);
+            }
+            else
+            {
+                Clients.Caller.sysMsg(string.Format("消息“{0}”发送失败：未找到 {1} 。", message, to));
+            }
+        }
+
+        public override System.Threading.Tasks.Task OnConnected()
+        {
+            var _userName = Context.QueryString["userName"];
+            if (users.ContainsKey(_userName))
+            {
+                users[_userName] = Context.ConnectionId;
+            }
+            else
+            {
+                users.Add(_userName, Context.ConnectionId);
+            }
+            Clients.Caller.sysMsg(string.Format("{0} 登录成功。", _userName));
+            return base.OnConnected();
         }
     }
 }

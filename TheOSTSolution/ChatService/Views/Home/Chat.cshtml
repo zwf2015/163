@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2 id="who">Chat</h2>使用自己托管的hub进行测试。
+<div class="row">
+    <input type="hidden" id="userName" value="" />
+    <input type="hidden" id="userId" value="" />
+    <div class="col-md-12">
+        <input class="input-sm" type="text" id="to" />
+        <input class="input-lg" type="text" id="msg" />
+        <button type="button" class="btn" id="sendBtn">发送</button>
+        <dl contenteditable="false" id="chatBox"></dl>
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.signalR-2.0.2.min.js"></script>
+<script src="~/sg/hubs"></script>
+<script>
+    $(function () {
+        var userName = prompt('Enter your name:', 'Tom');
+        if (!userName) { name = 'Tom'; }
+        $("#userName").val(userName);
+        $("#who").text(userName);
+
+        var connection = $.hubConnection("/sg", { useDefaultPath: false, transport: 'longpolling' });
+
+        connection.qs = { 'userName': $("#userName").val() };
+
+        var chatHubProxy = connection.createHubProxy('chatHub');
+
+        chatHubProxy.on('pushMsg', function (userName, message) {
+            receiveEvent(userName, message);
+        });
+
+        chatHubProxy.on('sysMsg', function (message) {
+            receiveEvent("系统消息", message);
+        });
+
+        connection.start()
+            .done(function () {
+                $("#sendBtn").click(function () {
+                    chatHubProxy
+                        .invoke('sendMsg', ($("#userName").val(), $("#to").val(), $("#msg").val()))
+                        .done(function () {
+                            receiveEvent($("#userName").val(), $("#msg").val());
+                        });
+                });
+            })
+            .fail(function (error) {
+                receiveEvent("链接失败", error);
+            });
+    });
+
+    function receiveEvent(userName, message) {
+        var now = new Date();
+        var msgHtml = "<dt>" + now.getHours() + ":" + now.getMinutes() + " " + userName + "</dt><dd>" + message + "</dd>";
+        $("#chatBox").append(msgHtml);
+    }
+</script>
