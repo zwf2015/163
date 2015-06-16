@@ -18,7 +18,7 @@ namespace SignalRSelfHost
     {
         static void Main(string[] args)
         {
-            string _url = "http://localhost:8097";
+            string _url = "http://localhost:65532";
             using (Microsoft.Owin.Hosting.WebApp.Start(_url))
             {
                 Console.WriteLine("Service runing on {0}...", _url);
