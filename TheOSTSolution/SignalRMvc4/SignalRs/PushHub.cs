@@ -70,11 +70,13 @@ namespace SignalRMvc4.SignalRs
             //
             return base.OnReconnected();
         }
-        public override Task OnDisconnected()
+
+        public override Task OnDisconnected(bool stopCalled)
         {
-            //
-            return base.OnDisconnected();
+
+            return base.OnDisconnected(stopCalled);
         }
+        
         #endregion
 
         #region 组管理

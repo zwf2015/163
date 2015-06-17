@@ -50,7 +50,7 @@ namespace SignalRSelfHost
         {
             if (users.ContainsKey(to))
             {
-                Clients.User(users[to]).pushMsg(from, message);
+                Clients.Client(users[to]).pushMsg(from, message);
             }
             else
             {
@@ -69,7 +69,7 @@ namespace SignalRSelfHost
             {
                 users.Add(_userName, Context.ConnectionId);
             }
-            Clients.Caller.sysMsg(string.Format("{0} 登录成功。", _userName));
+            Clients.Caller.sysMsg(string.Format("{0}({1}) 登录成功。", _userName, users[_userName]));
             return base.OnConnected();
         }
     }
