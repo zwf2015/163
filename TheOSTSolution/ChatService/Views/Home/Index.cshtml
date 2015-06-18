@@ -20,9 +20,8 @@
         <dl contenteditable="false" id="chatBox"></dl>
     </div>
 </div>
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script src="~/Scripts/jquery.signalR-2.0.2.min.js"></script>
-<script src="http://localhost:8097/signalr/hubs"></script>
+<script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="~/SignalRs/signalr/hubs"></script>
 <script type="text/javascript">
     $(function () {
         var userName = prompt('Enter your name:', 'Tom');
@@ -30,12 +29,10 @@
         $("#userName").val(userName);
         $("#who").text(userName);
 
-        //Set the hubs URL for the connection
-        $.connection.hub.url = "http://localhost:8097/signalr";
+        $.connection.hub.url = "/SignalRs";
+        $.connection.hub.qs = { 'userName': $("#userName").val() };
 
-        // Declare a proxy to reference the hub.
-        var chat = $.connection.myHub;
-
+        var chat = $.connection.chatHub;
         chat.client.pushMsg = function (userName, message) {
             receiveEvent(userName, message);
         };
@@ -43,21 +40,21 @@
             receiveEvent("系统消息", message);
         };
 
-        // Start the connection.
         $.connection.hub.start().done(function () {
             $("#sendBtn").click(function () {
-                chatHubProxy
-                    .invoke('sendMsg', ($("#userName").val(), $("#to").val(), $("#msg").val()))
+                chat.server.sendMsg($("#userName").val(), $("#to").val(), $("#msg").val())
                     .done(function () {
                         receiveEvent($("#userName").val(), $("#msg").val());
-                    });
+                    })
+					.fail(function (error) {
+					    receiveEvent("sendMsg错误", error);
+					});
             });
         })
         .fail(function (error) {
             receiveEvent("链接失败", error);
         });
     });
-
     function receiveEvent(userName, message) {
         var now = new Date();
         var msgHtml = "<dt>" + now.getHours() + ":" + now.getMinutes() + " " + userName + "</dt><dd>" + message + "</dd>";

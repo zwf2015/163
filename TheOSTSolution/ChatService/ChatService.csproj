@@ -193,7 +193,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="sg\ChatHub.cs" />
+    <Compile Include="Migrations\201506180109438_Init.cs" />
+    <Compile Include="Migrations\201506180109438_Init.Designer.cs">
+      <DependentUpon>201506180109438_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SignalRs\ChatHub.cs" />
     <Compile Include="Migrations\201506150438541_ChatServiceContext.cs" />
     <Compile Include="Migrations\201506150438541_ChatServiceContext.Designer.cs">
       <DependentUpon>201506150438541_ChatServiceContext.cs</DependentUpon>
@@ -276,6 +280,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201506150438541_ChatServiceContext.resx">
       <DependentUpon>201506150438541_ChatServiceContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506180109438_Init.resx">
+      <DependentUpon>201506180109438_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
