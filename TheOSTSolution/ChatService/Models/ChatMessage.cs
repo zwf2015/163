@@ -22,35 +22,15 @@ namespace ChatService.Models
         public DateTime SendTime { get; set; }
     }
 
-    public enum MessageState
+    public enum MessageState : int
     {
         /// <summary>
-        /// 系统消息
+        /// 未读
         /// </summary>
-        sys = 0,
+        newMessage = 0,
         /// <summary>
-        /// 买家发给卖家
+        /// 已读
         /// </summary>
-        b2s = 1,
-        /// <summary>
-        /// 买家互发
-        /// </summary>
-        b2b = 2,
-        /// <summary>
-        /// 卖家给买家
-        /// </summary>
-        s2b = 4,
-        /// <summary>
-        /// 卖家互发
-        /// </summary>
-        s2s = 8,
-        /// <summary>
-        /// 买家发到组
-        /// </summary>
-        b2g = 16,
-        /// <summary>
-        /// 卖家发到组
-        /// </summary>
-        s2g = 32
+        readed = 1
     }
 }

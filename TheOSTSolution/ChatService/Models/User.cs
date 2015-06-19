@@ -12,19 +12,15 @@ namespace ChatService.Models
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         /// <summary>
-        /// 用户数字编号
+        /// 自增长编号
         /// </summary>
         public int UserId { get; set; }
-        /// <summary>
-        /// 自动生成的编号
-        /// </summary>
-        public string UserGuid { get; set; }
         /// <summary>
         /// 用户名
         /// </summary>
         public string UserName { get; set; }
         /// <summary>
-        /// 链接状态
+        /// 多客户端登录状态
         /// </summary>
         public ICollection<Connection> Connections { get; set; }
         /// <summary>

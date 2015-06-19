@@ -33,26 +33,29 @@
         $.connection.hub.qs = { 'userName': $("#userName").val() };
 
         var chat = $.connection.chatHub;
-        chat.client.pushMsg = function (userName, message) {
-            receiveEvent(userName, message);
+        chat.client.pushMsg = function (msgDto) {
+            receiveEvent(msgDto.FromName, msgDto.Message);
+        };
+        chat.client.showMsg = function (msgDto) {
+            receiveEvent("我", msgDto.Message);
         };
         chat.client.sysMsg = function (message) {
-            receiveEvent("系统消息", message);
+            receiveEvent("系统消息：", message);
         };
 
         $.connection.hub.start().done(function () {
             $("#sendBtn").click(function () {
-                chat.server.sendMsg($("#userName").val(), $("#to").val(), $("#msg").val())
+                chat.server.sendMsg(getMessageDto($("#userName").val(), $("#to").val(), $("#msg").val()))
                     .done(function () {
-                        receiveEvent($("#userName").val(), $("#msg").val());
+                        receiveEvent("我", $("#msg").val());
                     })
 					.fail(function (error) {
-					    receiveEvent("sendMsg错误", error);
+					    receiveEvent("消息发送失败：", error);
 					});
             });
         })
         .fail(function (error) {
-            receiveEvent("链接失败", error);
+            receiveEvent("链接失败：", error);
         });
     });
     function receiveEvent(userName, message) {
@@ -60,4 +63,9 @@
         var msgHtml = "<dt>" + now.getHours() + ":" + now.getMinutes() + " " + userName + "</dt><dd>" + message + "</dd>";
         $("#chatBox").append(msgHtml);
     }
+    
+    function getMessageDto(from, to, msg) {
+        return { MessageId: 0, FromName: from, ToName: to, Message: msg, IsRead: false, DateTime: null };
+    }
+
 </script>

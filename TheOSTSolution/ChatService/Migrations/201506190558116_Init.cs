@@ -48,7 +48,6 @@ namespace ChatService.Migrations
                 c => new
                     {
                         UserId = c.Int(nullable: false, identity: true),
-                        UserGuid = c.String(),
                         UserName = c.String(),
                     })
                 .PrimaryKey(t => t.UserId);

@@ -12,25 +12,80 @@ namespace ChatService.Hubs
     public class ChatHub : Hub
     {
         /// <summary>
+        /// 存储当前登录用户的 链接 状态
+        /// </summary>
+        public static List<OnlineUser> onlineUsers = new List<OnlineUser>();
+
+        /// <summary>
         /// 发消息
         /// </summary>
-        /// <param name="from">from</param>
-        /// <param name="to">to</param>
-        /// <param name="message">message</param>
+        /// <param name="msgDto"></param>
         [HubMethodName("sendMsg")]
-        public void SendMsg(string from,string to, string message)
+        public void SendMsg(MsgDOT msgDto)
         {
             using (var db =new ChatServiceContext())
             {
-                string _userConnectionId = db.Users.Where(a => a.UserName == to).Select(a => a.UserGuid).FirstOrDefault();
-                if (_userConnectionId != null)
+                var _user = db.Users.FirstOrDefault(a => a.UserName == msgDto.ToName);
+                if (_user != null)
                 {
-                    Clients.Client(_userConnectionId).pushMsg(from, message);
+                    var _msg = new ChatMessage();
+                    _msg.From = db.Users.First(a => a.UserName == msgDto.FromName).UserId;
+                    _msg.To = _user.UserId;
+                    _msg.Message = msgDto.Message;
+                    _msg.MessageState = (int)MessageState.newMessage;
+                    _msg.SendTime = DateTime.Now;
+                    db.ChatMessages.Add(_msg);
+                    db.SaveChanges();
+                    msgDto.MessageId = _msg.MessageId;
+                    msgDto.Time = _msg.SendTime;
+
+                    syncSelf(msgDto);
+                    PushMsg(msgDto);
                 }
                 else
                 {
-                    Clients.Caller.sysMsg(string.Format("消息“{0}”发送失败：未找到 {1} 。", message, to));
+                    Clients.Caller.sysMsg(string.Format("消息“{0}”发送失败：未找到 {1} 。", msgDto.Message, msgDto.ToName));
                 }
+            }
+        }
+
+        /// <summary>
+        /// 发信人其他客户端推送消息
+        /// </summary>
+        /// <param name="msgDto"><see cref="MsgDOT"/></param>
+        private void syncSelf(MsgDOT msgDto) 
+        {
+            var fromIds = onlineUsers.First(a => a.UserName == msgDto.FromName).Connections.Select(a => a.ConnectionId).ToList();
+            fromIds.Remove(Context.ConnectionId);
+            if (fromIds.Any())
+            {
+                Clients.Clients(fromIds).showMsg(msgDto);
+            }
+        }
+
+        /// <summary>
+        /// 推送消息
+        /// </summary>
+        /// <param name="msgDto"><see cref="MsgDOT"/></param>
+        private void PushMsg(MsgDOT msgDto) 
+        {
+            //发送消息
+            var _user = onlineUsers.FirstOrDefault(a => a.UserName == msgDto.ToName);
+            if (_user != null)
+            {
+                var toIds = _user.Connections.Select(a => a.ConnectionId).ToList();
+                if (toIds.Any())
+                {
+                    Clients.Clients(toIds).pushMsg(msgDto);
+                }
+                else
+                {
+                    Clients.Caller.sysMsg(string.Format("对方已离线，消息会暂时存储到服务器，TA下次上线会看到 。"));
+                }
+            }
+            else
+            {
+                Clients.Caller.sysMsg(string.Format("对方已离线，消息会暂时存储到服务器，TA下次上线会看到 。"));
             }
         }
 
@@ -57,31 +112,34 @@ namespace ChatService.Hubs
                 if (user == null)
                 {
                     user = new User();
-                    user.UserId = 7;
                     user.UserName = _userName;
                     db.Users.Add(user);
-                }
-                //else
-                //{
-                //    foreach (var item in user.Groups)
-                //    {
-                //        Groups.Add(Context.ConnectionId, item.GroupName);
-                //    }
-                //}
-                user.UserGuid = Context.ConnectionId;
-                try
-                {
                     db.SaveChanges();
                 }
-                catch (Exception ex)
+                var _onlineUser=onlineUsers.FirstOrDefault(a=>a.UserName==_userName);
+                if (_onlineUser == null)
                 {
-                    Clients.Caller.sysMsg(string.Format("错误：{0}", ex));
+                    _onlineUser = new OnlineUser() { UserName = _userName, Connections = new List<Connection>() };
+                    onlineUsers.Add(_onlineUser);
                 }
+                _onlineUser.Connections.Add(new Connection() { ConnectionId = Context.ConnectionId, Connected = true, UserAgent = "" });
             }
-            Clients.Caller.sysMsg(string.Format("{0} 登录成功。", _userName));
+            //发送状态信息
+            Clients.Caller.sysMsg(string.Format("{0} 登录成功，当前共有 {1} 处登录。", _userName, onlineUsers.First(a => a.UserName == _userName).Connections.Count));
             return base.OnConnected();
         }
+        
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            var _userName = Context.QueryString["userName"];
 
+            var _user = onlineUsers.FirstOrDefault(a => a.UserName == _userName);
+            if (_user != null)
+            {
+                _user.Connections.Remove(_user.Connections.First(a => a.ConnectionId == Context.ConnectionId));
+            }
+            return base.OnDisconnected(stopCalled);
+        }
         /// <summary>
         /// 添加到组
         /// </summary>
@@ -95,12 +153,9 @@ namespace ChatService.Hubs
                 {
                     var user = new User()
                     {
-                        UserId = (db.Users.Max(a => a.UserId)) + 1,
                         UserName = Guid.NewGuid().ToString().Substring(8, 16),
-                        UserGuid = Context.ConnectionId
                     };
                     db.Users.Attach(user);
-
                     room.Users.Add(user);
                     db.SaveChanges();
 
@@ -125,9 +180,7 @@ namespace ChatService.Hubs
                 {
                     var user = new User()
                     {
-                        UserId = (db.Users.Max(a => a.UserId)) + 1,
                         UserName = Guid.NewGuid().ToString().Substring(8, 16),
-                        UserGuid = Context.ConnectionId
                     };
                     db.Users.Attach(user);
 
@@ -141,5 +194,23 @@ namespace ChatService.Hubs
             }
         }
 
+    }
+    public class OnlineUser
+    {
+        public string UserName { get; set; }
+        public ICollection<Connection> Connections { get; set; }
+    }
+
+    /// <summary>
+    /// 消息 数据 传输 对象
+    /// </summary>
+    public class MsgDOT 
+    {
+        public int MessageId { get; set; }
+        public string FromName { get; set; }
+        public string ToName { get; set; }
+        public string Message { get; set; }
+        public bool IsRead { get; set; }
+        public DateTime Time { get; set; }
     }
 }
