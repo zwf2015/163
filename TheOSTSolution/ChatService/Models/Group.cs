@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatService.Models
 {
+    /// <summary>
+    /// 用户分组
+    /// </summary>
     public class Group
     {
         [Key]

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ChatService.Models
 {
     /// <summary>
-    /// 多客户端登录
+    /// 多客户端登录(限制)
     /// </summary>
     public class Connection
     {

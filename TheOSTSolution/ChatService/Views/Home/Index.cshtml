@@ -42,6 +42,16 @@
         chat.client.sysMsg = function (message) {
             receiveEvent("系统消息：", message);
         };
+        //连接成功后服务端推送历史消息
+        chat.client.pushHistoryMsg = function (msgDtos) {
+            if (msgDtos) {
+                for (var i = 0; i < msgDtos.length; i++) {
+                    if (msgDtos[i]) {
+                        receiveEvent(msgDtos[i].FromName, msgDtos[i].Message, msgDtos[i].DateTime);
+                    }
+                }
+            }
+        };
 
         $.connection.hub.start().done(function () {
             $("#sendBtn").click(function () {
@@ -58,9 +68,10 @@
             receiveEvent("链接失败：", error);
         });
     });
-    function receiveEvent(userName, message) {
+    function receiveEvent(userName, message,time) {
         var now = new Date();
-        var msgHtml = "<dt>" + now.getHours() + ":" + now.getMinutes() + " " + userName + "</dt><dd>" + message + "</dd>";
+        if (!time) { time = now.getHours() + ":" + now.getMinutes() + " " + userName; }
+        var msgHtml = "<dt>" + time + "</dt><dd>" + message + "</dd>";
         $("#chatBox").append(msgHtml);
     }
     

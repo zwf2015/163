@@ -5,21 +5,25 @@ using System.Threading.Tasks;
 using ChatService.Models;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Newtonsoft.Json;
 
 namespace ChatService.Hubs
 {
+    /// <summary>
+    /// 聊天专用Hub
+    /// </summary>
     [HubName("chatHub")]
     public class ChatHub : Hub
     {
         /// <summary>
-        /// 存储当前登录用户的 链接 状态
+        /// 存储当前登录用户的连接状态
         /// </summary>
         public static List<OnlineUser> onlineUsers = new List<OnlineUser>();
 
         /// <summary>
         /// 发消息
         /// </summary>
-        /// <param name="msgDto"></param>
+        /// <param name="msgDto"><see cref="MsgDOT"/></param>
         [HubMethodName("sendMsg")]
         public void SendMsg(MsgDOT msgDto)
         {
@@ -89,15 +93,15 @@ namespace ChatService.Hubs
             }
         }
 
-        /// <summary>
-        /// 组中发言
-        /// </summary>
-        /// <param name="groupName">组名</param>
-        /// <param name="message">信息内容</param>
-        public void SendMsgInGroup(string groupName, string message)
-        {
-            Clients.Group(groupName, null).pushMsg(message);
-        }
+        ///// <summary>
+        ///// 组中发言
+        ///// </summary>
+        ///// <param name="groupName">组名</param>
+        ///// <param name="message">信息内容</param>
+        //public void SendMsgInGroup(string groupName, string message)
+        //{
+        //    Clients.Group(groupName, null).pushMsg(message);
+        //}
 
         /// <summary>
         /// 链接服务器成功，记录用户登录状态。
@@ -105,6 +109,7 @@ namespace ChatService.Hubs
         /// <returns></returns>
         public override Task OnConnected()
         {
+            List<MsgDOT> historyMsgs = new List<MsgDOT>();
             var _userName = Context.QueryString["userName"];
             using (var db = new ChatServiceContext())
             {
@@ -123,12 +128,35 @@ namespace ChatService.Hubs
                     onlineUsers.Add(_onlineUser);
                 }
                 _onlineUser.Connections.Add(new Connection() { ConnectionId = Context.ConnectionId, Connected = true, UserAgent = "" });
+
+                historyMsgs = db.ChatMessages.Where(a => (a.From == user.UserId && a.To == 1) || (a.From == 1 && a.To == user.UserId))
+                                             .OrderByDescending(a => a.MessageId)
+                                             .Select(a => new MsgDOT()
+                                             {
+                                                 MessageId = a.MessageId,
+                                                 FromName = (a.From == 1 ? "tom" : user.UserName),
+                                                 ToName = (a.From != 1 ? "tom" : user.UserName),
+                                                 Message = a.Message,
+                                                 IsRead = a.MessageState == (int)MessageState.readed,
+                                                 Time = a.SendTime
+                                             })
+                                             .Take(10)
+                                             .ToList();
             }
             //发送状态信息
             Clients.Caller.sysMsg(string.Format("{0} 登录成功，当前共有 {1} 处登录。", _userName, onlineUsers.First(a => a.UserName == _userName).Connections.Count));
+            //发送历史消息
+            Clients.Caller.pushHistoryMsg(historyMsgs);
+            Clients.Caller.sysMsg("以上是历史消息");
+
             return base.OnConnected();
         }
         
+        /// <summary>
+        /// 断开连接时移除连接状态
+        /// </summary>
+        /// <param name="stopCalled"></param>
+        /// <returns></returns>
         public override Task OnDisconnected(bool stopCalled)
         {
             var _userName = Context.QueryString["userName"];
@@ -140,64 +168,73 @@ namespace ChatService.Hubs
             }
             return base.OnDisconnected(stopCalled);
         }
-        /// <summary>
-        /// 添加到组
-        /// </summary>
-        /// <param name="roomName">组名</param>
-        public void AddToRoom(string roomName)
-        {
-            using (var db = new ChatServiceContext())
-            {
-                var room = db.Groups.Find(roomName);
-                if (room != null)
-                {
-                    var user = new User()
-                    {
-                        UserName = Guid.NewGuid().ToString().Substring(8, 16),
-                    };
-                    db.Users.Attach(user);
-                    room.Users.Add(user);
-                    db.SaveChanges();
 
-                    Clients.Group(roomName, null).sysMsg(string.Format("{0} 加入了本组。",Context.User.Identity.Name));
+        ///// <summary>
+        ///// 添加到组
+        ///// </summary>
+        ///// <param name="roomName">组名</param>
+        //public void AddToRoom(string roomName)
+        //{
+        //    using (var db = new ChatServiceContext())
+        //    {
+        //        var room = db.Groups.Find(roomName);
+        //        if (room != null)
+        //        {
+        //            var user = new User()
+        //            {
+        //                UserName = Guid.NewGuid().ToString().Substring(8, 16),
+        //            };
+        //            db.Users.Attach(user);
+        //            room.Users.Add(user);
+        //            db.SaveChanges();
 
-                    Groups.Add(Context.ConnectionId, roomName);
-                }
-            }
-        }
+        //            Clients.Group(roomName, null).sysMsg(string.Format("{0} 加入了本组。",Context.User.Identity.Name));
 
-        /// <summary>
-        /// 退出组
-        /// </summary>
-        /// <param name="roomName">组名</param>
-        public void RemoveFromRoom(string roomName)
-        {
-            using (var db = new ChatServiceContext())
-            {
-                // Retrieve room.
-                var room = db.Groups.Find(roomName);
-                if (room != null)
-                {
-                    var user = new User()
-                    {
-                        UserName = Guid.NewGuid().ToString().Substring(8, 16),
-                    };
-                    db.Users.Attach(user);
+        //            Groups.Add(Context.ConnectionId, roomName);
+        //        }
+        //    }
+        //}
 
-                    room.Users.Remove(user);
-                    db.SaveChanges();
+        ///// <summary>
+        ///// 退出组
+        ///// </summary>
+        ///// <param name="roomName">组名</param>
+        //public void RemoveFromRoom(string roomName)
+        //{
+        //    using (var db = new ChatServiceContext())
+        //    {
+        //        // Retrieve room.
+        //        var room = db.Groups.Find(roomName);
+        //        if (room != null)
+        //        {
+        //            var user = new User()
+        //            {
+        //                UserName = Guid.NewGuid().ToString().Substring(8, 16),
+        //            };
+        //            db.Users.Attach(user);
 
-                    Groups.Remove(Context.ConnectionId, roomName);
+        //            room.Users.Remove(user);
+        //            db.SaveChanges();
 
-                    Clients.Group(roomName, null).sysMsg(string.Format("{0} 离开了本组。", Context.User.Identity.Name));
-                }
-            }
-        }
+        //            Groups.Remove(Context.ConnectionId, roomName);
 
+        //            Clients.Group(roomName, null).sysMsg(string.Format("{0} 离开了本组。", Context.User.Identity.Name));
+        //        }
+        //    }
+        //}
     }
+    /// <summary>
+    /// 在线用户对象
+    /// </summary>
     public class OnlineUser
     {
+        /// <summary>
+        /// 用户名
+        /// </summary>
         public string UserName { get; set; }
+        /// <summary>
+        /// 已经登陆的客户端
+        /// </summary>
         public ICollection<Connection> Connections { get; set; }
     }
 
