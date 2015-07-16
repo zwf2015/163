@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using ChatService.Models;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
-using Newtonsoft.Json;
+
+using log4net;
 
 namespace ChatService.Hubs
 {
@@ -15,6 +16,9 @@ namespace ChatService.Hubs
     [HubName("chatHub")]
     public class ChatHub : Hub
     {
+        //private Models.Entities logDb = new Entities();
+        private static readonly ILog log = LogManager.GetLogger(typeof(ChatHub));
+        
         /// <summary>
         /// 存储当前登录用户的连接状态
         /// </summary>
@@ -48,7 +52,12 @@ namespace ChatService.Hubs
                 }
                 else
                 {
-                    Clients.Caller.sysMsg(string.Format("消息“{0}”发送失败：未找到 {1} 。", msgDto.Message, msgDto.ToName));
+                    string _errorMsg = string.Format("消息“{0}”发送失败：未找到 {1} 。", msgDto.Message, msgDto.ToName);
+                    Clients.Caller.sysMsg(_errorMsg);
+                    if (log.IsErrorEnabled)
+                    {
+                        log.Error(_errorMsg);
+                    }
                 }
             }
         }
@@ -144,7 +153,12 @@ namespace ChatService.Hubs
                                              .ToList();
             }
             //发送状态信息
-            Clients.Caller.sysMsg(string.Format("{0} 登录成功，当前共有 {1} 处登录。", _userName, onlineUsers.First(a => a.UserName == _userName).Connections.Count));
+            string _loginMsg = string.Format("{0} 登录成功，当前共有 {1} 处登录。", _userName, onlineUsers.First(a => a.UserName == _userName).Connections.Count);
+            Clients.Caller.sysMsg(_loginMsg);
+            if (log.IsInfoEnabled)
+            {
+                log.Info(_loginMsg);
+            }
             //发送历史消息
             Clients.Caller.pushHistoryMsg(historyMsgs);
             Clients.Caller.sysMsg("以上是历史消息");
