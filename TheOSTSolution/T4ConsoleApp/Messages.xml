@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<messages>
+   <message id="MandatoryField" value="The {0} is mandatory."  category="Validation"/>
+   <message id="GreaterThan" value="The {0} must be greater than {1}."  category="Validation"/>
+   <message id="ReallyDelete" value="Do you really want to delete the {0}."  category="Confirmation"/>
+</messages>

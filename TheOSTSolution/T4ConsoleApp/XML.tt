@@ -1,0 +1,35 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core.dll" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".cs" #>
+
+using T4ConsoleApp;
+
+namespace MessageCodeGenrator
+{
+    public static class Messages
+    {    
+        <# XmlDocument messageDoc = new XmlDocument();
+        messageDoc.Load(this.Host.ResolvePath("Messages.xml"));
+        var messageEntries = messageDoc.GetElementsByTagName("message").Cast<XmlElement>();  
+        var categories = (from element in messageEntries
+                            select element.Attributes["category"].Value).Distinct();
+        foreach (var category in categories)  
+        { #>
+		public static class <#= category#>
+        {
+         <# foreach (var element in messageDoc.GetElementsByTagName("message").Cast<XmlElement>().Where(element => element.Attributes["category"].Value == category))  
+            {                      
+                string id           = element.Attributes["id"].Value;  
+                string value        = element.Attributes["value"].Value;  
+                string categotry    = element.Attributes["category"].Value;
+            #>
+			public static MessageEntry <#= id #> = new MessageEntry("<#= id #>","<#=  value#>","<#=  categotry#>");
+        <#  } #>
+        }
+    <# } #>
+    }
+}

@@ -41,25 +41,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageEntry.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Script1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WriteLine.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WriteLine.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XML.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XML.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="TextTemplate1.tt">
+    <None Include="Generator1.tt" />
+    <None Include="Script1.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TextTemplate1.txt</LastGenOutput>
+      <LastGenOutput>Script1.cs</LastGenOutput>
+    </None>
+    <None Include="WriteLine.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>WriteLine.cs</LastGenOutput>
+    </None>
+    <None Include="XML.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XML.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TextTemplate1.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TextTemplate1.tt</DependentUpon>
-    </Content>
+    <Content Include="Messages.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

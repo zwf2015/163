@@ -1,0 +1,22 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ output extension=".cs" #>
+using System;
+
+namespace T4ConsoleApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+			<# foreach(var day in this.InitWeek()) { #>Console.WriteLine("hello,{0}!", "<#= day #>");
+			<# }#>
+
+		}
+    }
+}<#+
+	public string[] InitWeek(){
+		return new string[] {"1","2","3","4","5","6","7"};
+	}
+#>
