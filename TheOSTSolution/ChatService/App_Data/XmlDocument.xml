@@ -481,44 +481,90 @@
             </summary>
             <param name="documentPath">The physical path to XML document.</param>
         </member>
+        <member name="T:ChatService.Hubs.ChatHub">
+            <summary>
+            聊天专用Hub
+            </summary>
+        </member>
+        <member name="F:ChatService.Hubs.ChatHub.onlineUsers">
+            <summary>
+            存储当前登录用户的连接状态
+            </summary>
+        </member>
+        <member name="M:ChatService.Hubs.ChatHub.SendMsg(ChatService.Hubs.MsgDOT)">
+            <summary>
+            发消息
+            </summary>
+            <param name="msgDto"><see cref="T:ChatService.Hubs.MsgDOT"/></param>
+        </member>
+        <member name="M:ChatService.Hubs.ChatHub.syncSelf(ChatService.Hubs.MsgDOT)">
+            <summary>
+            发信人其他客户端推送消息
+            </summary>
+            <param name="msgDto"><see cref="T:ChatService.Hubs.MsgDOT"/></param>
+        </member>
+        <member name="M:ChatService.Hubs.ChatHub.PushMsg(ChatService.Hubs.MsgDOT)">
+            <summary>
+            推送消息
+            </summary>
+            <param name="msgDto"><see cref="T:ChatService.Hubs.MsgDOT"/></param>
+        </member>
+        <member name="M:ChatService.Hubs.ChatHub.OnConnected">
+            <summary>
+            链接服务器成功，记录用户登录状态。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ChatService.Hubs.ChatHub.OnDisconnected(System.Boolean)">
+            <summary>
+            断开连接时移除连接状态
+            </summary>
+            <param name="stopCalled"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ChatService.Hubs.OnlineUser">
+            <summary>
+            在线用户对象
+            </summary>
+        </member>
+        <member name="P:ChatService.Hubs.OnlineUser.UserName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:ChatService.Hubs.OnlineUser.Connections">
+            <summary>
+            已经登陆的客户端
+            </summary>
+        </member>
+        <member name="T:ChatService.Hubs.MsgDOT">
+            <summary>
+            消息 数据 传输 对象
+            </summary>
+        </member>
         <member name="T:ChatService.Models.ChatMessage">
             <summary>
             聊天内容
             </summary>
         </member>
-        <member name="F:ChatService.Models.MessageState.sys">
+        <member name="F:ChatService.Models.MessageState.newMessage">
             <summary>
-            系统消息
+            未读
             </summary>
         </member>
-        <member name="F:ChatService.Models.MessageState.b2s">
+        <member name="F:ChatService.Models.MessageState.readed">
             <summary>
-            买家发给卖家
+            已读
             </summary>
         </member>
-        <member name="F:ChatService.Models.MessageState.b2b">
+        <member name="T:ChatService.Models.Connection">
             <summary>
-            买家互发
+            多客户端登录(限制)
             </summary>
         </member>
-        <member name="F:ChatService.Models.MessageState.s2b">
+        <member name="T:ChatService.Models.Group">
             <summary>
-            卖家给买家
-            </summary>
-        </member>
-        <member name="F:ChatService.Models.MessageState.s2s">
-            <summary>
-            卖家互发
-            </summary>
-        </member>
-        <member name="F:ChatService.Models.MessageState.b2g">
-            <summary>
-            买家发到组
-            </summary>
-        </member>
-        <member name="F:ChatService.Models.MessageState.s2g">
-            <summary>
-            卖家发到组
+            用户分组
             </summary>
         </member>
         <member name="T:ChatService.Models.User">
@@ -526,29 +572,43 @@
             用户
             </summary>
         </member>
-        <member name="P:ChatService.Models.User.UserId">
-            <summary>
-            用户数字编号
-            </summary>
-        </member>
-        <member name="P:ChatService.Models.User.UserGuid">
-            <summary>
-            自动生成的Guid编号
-            </summary>
-        </member>
         <member name="P:ChatService.Models.User.UserName">
             <summary>
-            不重复的用户名
+            用户名
             </summary>
         </member>
         <member name="P:ChatService.Models.User.Connections">
             <summary>
-            链接状态
+            多客户端登录状态
             </summary>
         </member>
         <member name="P:ChatService.Models.User.Groups">
             <summary>
             所属组
+            </summary>
+        </member>
+        <member name="T:ChatService.SignalRs.NewHubPipelineModule">
+            <summary>
+            自定义的Hub管道处理模块
+            </summary>
+        </member>
+        <member name="M:ChatService.SignalRs.NewHubPipelineModule.OnIncomingError(Microsoft.AspNet.SignalR.Hubs.ExceptionContext,Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext)">
+            <summary>
+            重写Hub错误处理
+            </summary>
+            <param name="exceptionContext"></param>
+            <param name="invokerContext"></param>
+        </member>
+        <member name="M:ChatService.SignalRs.NewHubPipelineModule.OnBeforeIncoming(Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext)">
+            <summary>
+            获取登录人的标识
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ChatService.SignalRs.NewHubPipelineModule._connectionId">
+            <summary>
+            记录当前登录人的标识
             </summary>
         </member>
     </members>

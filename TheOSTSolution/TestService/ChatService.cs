@@ -5,7 +5,6 @@ using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
 using Owin;
 
-
 [assembly: OwinStartup(typeof(TestService.ChatService.Startup))]
 namespace TestService
 {

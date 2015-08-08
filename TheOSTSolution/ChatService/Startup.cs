@@ -17,7 +17,6 @@ namespace ChatService
             var config = new Microsoft.AspNet.SignalR.HubConfiguration();
             config.EnableJSONP = true;
             config.EnableDetailedErrors = true;
-            //app.MapSignalR(config);
 
             //使用自己的Hub文件夹
             app.MapSignalR("/SignalRs", config);

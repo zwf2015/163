@@ -202,6 +202,10 @@
     <Compile Include="Migrations\201506190558116_Init.Designer.cs">
       <DependentUpon>201506190558116_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201508050251388_Init3.cs" />
+    <Compile Include="Migrations\201508050251388_Init3.Designer.cs">
+      <DependentUpon>201508050251388_Init3.cs</DependentUpon>
+    </Compile>
     <Compile Include="SignalRs\ChatHub.cs" />
     <Compile Include="Migrations\201506150438541_ChatServiceContext.cs" />
     <Compile Include="Migrations\201506150438541_ChatServiceContext.Designer.cs">
@@ -294,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506190558116_Init.resx">
       <DependentUpon>201506190558116_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508050251388_Init3.resx">
+      <DependentUpon>201508050251388_Init3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
