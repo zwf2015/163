@@ -13,7 +13,6 @@ namespace ChatService
     {
         protected void Application_Start()
         {
-            
             //log4net的配置在app.config中
             //[assembly:log4net.Config.DOMConfigurator(ConfigFileExtension="config",Watch=true)]
             //log4net自己的配置文件
@@ -25,7 +24,6 @@ namespace ChatService
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            int i = 3;
         }
     }
 }
