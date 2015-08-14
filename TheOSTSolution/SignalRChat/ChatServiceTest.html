@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Chat Service Page</title>
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2 id="who">Chat</h2>
+    <div class="row">
+        <input type="hidden" id="userName" value="" />
+        <input type="hidden" id="userId" value="" />
+        <div class="col-md-12">
+            <input class="input-sm" type="text" id="to" />
+            <input class="input-lg" type="text" id="msg" />
+            <button type="button" class="btn" id="sendBtn">发送</button>
+            <dl contenteditable="false" id="chatBox"></dl>
+        </div>
+    </div>
+    <script src="Scripts/jquery-2.1.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="http://localhost:65530/SignalRs/signalr/hubs"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            var userName = prompt('Enter your name:', 'Tom');
+            if (!userName) { name = 'Tom'; }
+            $("#userName").val(userName);
+            $("#who").text(userName);
+
+            $.connection.hub.url = "http://localhost:65530/SignalRs/signalr"; // "/SignalRs";
+
+            $.connection.hub.qs = { 'userName': $("#userName").val() };
+
+            var chat = $.connection.chatHub;
+            chat.client.pushMsg = function (msgDto) {
+                receiveEvent(msgDto.FromName, msgDto.Message);
+            };
+            chat.client.showMsg = function (msgDto) {
+                receiveEvent("我", msgDto.Message);
+            };
+            chat.client.sysMsg = function (message) {
+                receiveEvent("系统消息：", message);
+            };
+            //连接成功后服务端推送历史消息
+            chat.client.pushHistoryMsg = function (msgDtos) {
+                if (msgDtos) {
+                    for (var i = 0; i < msgDtos.length; i++) {
+                        if (msgDtos[i]) {
+                            receiveEvent(msgDtos[i].FromName, msgDtos[i].Message, msgDtos[i].DateTime);
+                        }
+                    }
+                }
+            };
+
+            $.connection.hub.start().done(function () {
+                $("#sendBtn").click(function () {
+                    chat.server.sendMsg(getMessageDto($("#userName").val(), $("#to").val(), $("#msg").val()))
+                        .done(function () {
+                            receiveEvent("我", $("#msg").val());
+                        })
+                        .fail(function (error) {
+                            receiveEvent("消息发送失败：", error);
+                        });
+                });
+            })
+            .fail(function (error) {
+                receiveEvent("链接失败：", error);
+            });
+        });
+
+        function receiveEvent(userName, message, time) {
+            var now = new Date();
+            if (!time) { time = now.getHours() + ":" + now.getMinutes() + " " + userName; }
+            var msgHtml = "<dt>" + time + "</dt><dd>" + message + "</dd>";
+            $("#chatBox").append(msgHtml);
+        }
+
+        function getMessageDto(from, to, msg) {
+            return { MessageId: 0, FromName: from, ToName: to, Message: msg, IsRead: false, DateTime: null };
+        }
+
+    </script>
+</body>
+</html>
