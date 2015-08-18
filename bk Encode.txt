@@ -1,0 +1,138 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>plusEncode</title>
+</head>
+<body>
+<h1>plusEncode</h1><br/>
+<?php
+start();
+function start()
+{
+	/*
+	*基本特点：每次加密结果都不同，能验证过期时间
+	*缺点：密文长
+	*/
+	$text="www.79.com";
+	$res=plusEncode($text);
+	echo '需要加密的内容：',$text,'<br />';
+	echo '密文：',$res,'<br />';
+	echo '解密结果：',plusDecode($res),'<br />';
+}
+
+//加密方法
+function plusEncode($text)
+{
+	$timestamp=time();
+	$nuits=$timestamp%10;
+	$tens=$timestamp/10%10;
+	$des_count1=$nuits+$tens;
+	$str_txt_h0=bin2hex($text);
+	$arr_txt_h0=str_split($str_txt_h0);
+	$str_txt_b00=my_convert($arr_txt_h0,16,2,true);
+	$str_txt_b01=desCode($str_txt_b00,$des_count1,true);//第一次排序 次数：时间戳个位和十位的和
+	$randCount=rand(1,7);//获取随机数
+	$str_time_b=base_convert($timestamp,10,2);
+	$str_time_b=mvRight($str_time_b,32);
+	$str_txt_b10=($str_txt_b01.$str_time_b);//加盐time:上次排序结果+32位二进制表示的时间戳
+	$str_txt_b11=desCode($str_txt_b10,$randCount,true);//第二次排序，次数：随机数
+	$str_rand_b=base_convert($randCount,8,2);
+	$str_rand_b=mvRight($str_rand_b,3);
+	$str_txt_b20=($str_txt_b11.$str_rand_b.'0');//加盐randCount:上次排序结果+4位二进制表示的随机数
+	$str_txt_b21=desCode($str_txt_b20,1,true);//第三次排序,次数：1次
+	$arr_txt_h1=str_split($str_txt_b21,4);
+	$str_txt_h2=my_convert($arr_txt_h1,2,16,false);//转换为16进制
+	return $str_txt_h2;//返回加密结果
+}
+//解密方法
+function plusDecode($text)
+{
+	$str_txt_h9=trim($text);
+	$arr_txt_h9=str_split($str_txt_h9);
+	$str_txt_b90=my_convert($arr_txt_h9,16,2,true);
+	$str_txt_b91=desCode($str_txt_b90,1,false);
+	$str_rand_b=substr($str_txt_b91,-4,3);
+	$randCount=base_convert($str_rand_b,2,8);
+	$str_txt_b80=substr($str_txt_b91,0,-4);
+	$str_txt_b81=desCode($str_txt_b80,$randCount,false);
+	$str_time_b=substr($str_txt_b81,-32);
+	$timestamp=base_convert($str_time_b,2,10);
+	$time_now=time();
+	if(($time_now-$timestamp)<600){ //过期验证，默认600 单位秒
+		$nuits=$timestamp%10;
+		$tens=$timestamp/10%10;
+		$des_count9=$nuits+$tens;
+		$str_txt_b70=substr($str_txt_b81,0,-32);
+		$str_txt_b71=desCode($str_txt_b70,$des_count9,false);
+		$arr_txt_h8=str_split($str_txt_b71,4);
+		$str_txt_h8=my_convert($arr_txt_h8,2,16,false);
+		$str_txt=pack("H*",$str_txt_h8);
+		return $str_txt;//返回结果
+	}else{
+		return '密码已过期！';
+	}
+}
+//将数组的每个value进行进制转换，[true=不足4位补0,false=不补0]
+function my_convert($arr,$from,$to,$is4){
+	$resultStr='';
+	foreach($arr as $row){
+		$val=base_convert($row,$from,$to);
+		if($is4){
+			$i=strlen($val);
+			while((4-$i)>0){
+				$val='0'.$val;
+				$i++;
+			}
+		}
+		$resultStr.=$val;
+	}
+	return $resultStr;
+}
+//模拟右移成为指定长度
+function mvRight($b,$c){
+	$i=strlen($b);
+	while(($c-$i)>0){
+		$b='0'.$b;
+		$i++;
+	}
+	return $b;
+}
+//排序方法，参数[二进制字符串，次数，true=加密排序|false=解密排序]
+//排序规则：0123456789 -> 1357902468 -> 37041592 -> ...
+function desCode($str,$count,$type){
+	$arr=str_split($str);
+	$num1=count($arr);
+	$num2=$num1/2;
+	$resultStr='';
+	for($c=0;$c<$count;$c++){
+		if($type){
+			$arr1324=array();
+			$strRes13='';$strRes24='';
+			for($i=0;$i<$num1;$i++){
+				if($i%2==0){
+					$strRes24.=$arr[$i];
+				}else{
+					$strRes13.=$arr[$i];
+				}
+			}
+			$resultStr=$strRes13.$strRes24;
+			$arr1324=str_split($strRes13.$strRes24);
+			$arr=$arr1324;
+		}else{
+			$tmpstr='';
+			$arr1234=array();
+			for($j=0;$j<$num2;$j++){
+				$arr1234[$j*2]=$arr[$num2+$j];
+				$arr1234[$j*2+1]=$arr[$j];
+				$tmpstr=$tmpstr.$arr[$num2+$j].$arr[$j];
+			}
+			$resultStr=$tmpstr;
+			$arr=$arr1234;
+		}
+	}
+	return $resultStr;
+}
+
+?>
+</body>
+</html>
