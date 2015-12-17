@@ -1,4 +1,3 @@
-/home/dv37/websites/www.37.cn/Web/shops/web/cron/dataCollecter.php 
         #region public string 升级版加密 二进制排序+时间验证 每秒加密结果都不同
         //升级版加密
         private string MyPlusEnCode(string text)
